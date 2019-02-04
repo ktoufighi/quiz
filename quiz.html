@@ -1,126 +1,213 @@
 <!DOCTYPE html>
   <html>
   <head>
-    <link rel = "stylesheet" type = "text/css" href = "quiz-style.css" />
+    <link rel = "stylesheet" type = "text/css" href = "quiz-style.css"/>
   </head>
-
-  <!-- We have 3 containers in our HTML 1. quiz container 2. submit 3.
-    resutls which appears after we submit our answers. -->
   <body>
-    <div id="quiz"></div>
+    <div class="quiz-container">
+      <div id="quiz"></div>
+    </div>
+    <button id="previous">Previouse Question</button>
+    <button id="next">Next Questions</button>
     <button id="submit">Submit Quiz</button>
     <div id="results"></div>
 
 
+  <script>
+    (function () {
+      // to build a quiz we need 1. questions, order of questions, answers to choose from, radio button to select the answer or not to select any. and finally a submit button to lock in the picked answer
+    // to see the results of the quiz we need a counter function to compile all the answers to to questions from the list of questions add them and give us the final number of correct or incorret answers.
 
-  <!-- Javascript starts from here -->
-    <script>
-      (function() {
-      function buildQuiz() {
-        // we'll need a place to store the HTML output
-        const output = [];
+    // to start we need a couple of functions
+    // one to run the quiz
+    // one to go through each question and pick the answers selected
+    // one to add all the answers and show them on the screen
 
-        // for each question...
-        myQuestions.forEach((currentQuestion, questionNumber) => {
-          // we'll want to store the list of answer choices
-          const answers = [];
+    const quizContainer = document.getElementById('quiz');
+    const submitButton = document.getElementById('submit');
+    const resultsContainer = document.getElementById('results');
+    const myQuestions = [
+      {
+        question: "Who is the strongest?",
+        answers: {
+          a: "Superman",
+          b: "The Terminator",
+          c: "Waluigi, obviously"
+        },
+        correctAnswer: "c"
+      },
+      {
+        question: "What is the best site ever created?",
+        answers: {
+          a: "SitePoint",
+          b: "Simple Steps Code",
+          c: "Trick question; they're both the best"
+        },
+        correctAnswer: "c"
+      },
+      {
+        question: "Where is Waldo really?",
+        answers: {
+          a: "Antarctica",
+          b: "Exploring the Pacific Ocean",
+          c: "Sitting in a tree",
+          d: "Minding his own business, so stop asking"
+        },
+        correctAnswer: "d"
+      },
+      {
+        question: "How many oscars did the Titanic movie got?",
+        answers: {
+          a: "Ten",
+          b: "Eleven",
+          c: "Eight",
+          d: "All of the above"
+        },
+        correctAnswer: "b"
+      },
+      {
+        question: "What is the house number of the Simpsons?",
+        answers: {
+          a: "No house number",
+          b: "Bervery Hills 90210",
+          c: "Number 742",
+          d: "Triple 6"
+        },
+        correctAnswer: "c"
+      }
+    ];
 
-          // and for each available answer...
-          for (letter in currentQuestion.answers) {
-            // ...add an HTML radio button
-            answers.push(
-              `<label>
-                <input type="radio" name="question${questionNumber}" value="${letter}">
-                ${letter} :
-                ${currentQuestion.answers[letter]}
-              </label>`
-            );
-          }
+    function buildQuiz () {
+      // first we need to store the html output
+      const output = [];
 
-          // add this question and its answers to the output
-          output.push(
-            `<div class="question"> ${currentQuestion.question} </div>
-            <div class="answers"> ${answers.join("")} </div>`
+      // for each of the questions...
+      myQuestions.forEach((currentQuestion, questionNumber) => {
+
+        // we will want to store the list of anwer choices
+        const answers = [];
+
+        // and for each available answer we need a letter
+        for(letter in currentQuestion.answers) {
+          // ... add an HTML radio button attribute
+          answers.push(
+            `<label>
+            <input type='radio' name='question${questionNumber}' value='${letter}'>
+            ${letter} : ${currentQuestion.answers[letter]}
+            </label>`
           );
-        });
-
-        // finally combine our output list into one string of HTML and put it on the page
-        quizContainer.innerHTML = output.join("");
-      }
-
-      function showResults() {
-        // gather answer containers from our quiz
-        const answerContainers = quizContainer.querySelectorAll(".answers");
-
-        // keep track of user's answers
-        let numCorrect = 0;
-
-        // for each question...
-        myQuestions.forEach((currentQuestion, questionNumber) => {
-          // find selected answer
-          const answerContainer = answerContainers[questionNumber];
-          const selector = `input[name=question${questionNumber}]:checked`;
-          const userAnswer = (answerContainer.querySelector(selector) || {}).value;
-
-          // if answer is correct
-          if (userAnswer === currentQuestion.correctAnswer) {
-            // add to the number of correct answers
-            numCorrect++;
-
-            // color the answers green
-            answerContainers[questionNumber].style.color = "lightgreen";
-          } else {
-            // if answer is wrong or blank
-            // color the answers red
-            answerContainers[questionNumber].style.color = "red";
-          }
-        });
-
-        // show number of correct answers out of total
-        resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
-      }
-
-      const quizContainer = document.getElementById("quiz");
-      const resultsContainer = document.getElementById("results");
-      const submitButton = document.getElementById("submit");
-      const myQuestions = [
-        {
-          question: "Who is the strongest?",
-          answers: {
-            a: "Superman",
-            b: "The Terminator",
-            c: "Waluigi, obviously"
-          },
-          correctAnswer: "c"
-        },
-        {
-          question: "What is the best site ever created?",
-          answers: {
-            a: "SitePoint",
-            b: "Simple Steps Code",
-            c: "Trick question; they're both the best"
-          },
-          correctAnswer: "c"
-        },
-        {
-          question: "Where is Waldo really?",
-          answers: {
-            a: "Antarctica",
-            b: "Exploring the Pacific Ocean",
-            c: "Sitting in a tree",
-            d: "Minding his own business, so stop asking"
-          },
-          correctAnswer: "d"
         }
-      ];
 
-      // display quiz right away
-      buildQuiz();
 
-      // on submit, show results
-      submitButton.addEventListener("click", showResults);
-    })();
+        // add this question and its answers to the output
+        output.push(
+          `<div class='slide'>
+            <div class='question'> ${currentQuestion.question} </div>
+            <div class='answers'> ${answers.join('')} </div>
+          </div>`
+        );
 
-    </script>
-  </body>
+        });
+
+    // finally combine our output list into a string of HTML and put it on the HTML
+    quizContainer.innerHTML = output.join('');
+    }
+
+    // ******** at this point our buidQuiz function is complete ******** //
+
+
+    // here we want to display the quiz results by running showResulst() function
+
+    function showResults () {
+
+      // gather answer containers from our quiz
+      const answerContainers =
+    quizContainer.querySelectorAll('.answers');
+
+    // keep track of user's answers
+    // we start with 0 and keep track by adding the answers to it numCorrect ++
+    let numCorrect = 0;
+
+    // for each quesitons...
+    // once again we do a for loop to go over every quesiton and its index
+    myQuestions.forEach( (currentQuestion, questionNumber) => {
+
+    // find the selected answer
+    const answerContainer = answerContainers[questionNumber];
+    const selector = `input[name=question${questionNumber}]:checked`;
+    const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+    // if answer is correct do this
+    if (userAnswer === currentQuestion.correctAnswer) {
+
+      // add to the number of correct answers
+      numCorrect ++;
+
+      // color the answers green
+      // answerContainers[questionNumber].style.color = 'lightgreen';
+
+
+      // // if answer is not correct or blank do the other thing
+      // } else {
+
+      //   // color the anwers red
+      //   answerContainers[questionNumber].style.color = 'red';
+
+      }
+    });
+
+    // show number of correct answers out of total
+    resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length} correct answer(s).`;
+
+    }
+
+    //run the buildQuiz function right away
+    buildQuiz();
+
+
+    //on submit, show results
+    submitButton.addEventListener('click', showResults);
+
+
+    //pagination
+    const previousButton = document.getElementById('previous');
+    const nextButton = document.getElementById('next');
+    const slides = document.querySelectorAll('.slide');
+    let currentSlide = 0;
+
+    function showSlide(n) {
+      slides[currentSlide].classList.remove('active-slide');
+      slides[n].classList.add('active-slide');
+      currentSlide = n;
+      if(currentSlide===0){
+        previousButton.style.display = 'none';
+      }
+      else{
+        previousButton.style.display = 'inline-block';
+      }
+      if(currentSlide===slides.length-1){
+        nextButton.style.display = 'none';
+        submitButton.style.display = 'inline-block';
+      }
+      else{
+        nextButton.style.display = 'inline-block';
+        submitButton.style.display = 'none';
+      }
+    }
+
+    showSlide(0);
+
+    function showNextSlide () {
+      showSlide(currentSlide + 1);
+    }
+
+    function showPreviusSlide () {
+      showSlide(currentSlide - 1);
+    }
+
+    previousButton.addEventListener("click", showPreviusSlide);
+    nextButton.addEventListener("click", showNextSlide);
+  })();
+  </script>
+</body>
 </html>
